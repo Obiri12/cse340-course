@@ -1,39 +1,47 @@
-import express from "express";
-import path from "path";
-import { fileURLToPath } from "url";
+import express from 'express';
+import { fileURLToPath } from 'url';
+import path from 'path';
 
-const app = express();
-const port = process.env.PORT || 3000;
+// Define the application environment
+const NODE_ENV = process.env.NODE_ENV?.toLowerCase() || 'production';
 
-// Needed because __dirname is not available in ES modules
+// Define the port number the server will listen on
+const PORT = process.env.PORT || 3000;
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Set EJS as the view engine
-app.set("view engine", "ejs");
+const app = express();
 
-// Serve static files
-app.use(express.static(path.join(__dirname, "public")));
+//Set Ejs a the templating engine
+app.set('view engine', 'ejs')
 
-// Routes
-app.get("/", (req, res) => {
-  res.render("home", { title: "Home" });
+// Tell express where to fine your templates
+app.set('views', path.join(__dirname, 'src/views')); 
+
+/**
+  * Configure Express middleware
+  */
+
+// Serve static files from the public directory
+app.use(express.static(path.join(__dirname, 'public')));
+
+/**
+  * Routes
+  */
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'src/views/home.html'));
 });
 
-app.get("/organizations", (req, res) => {
-  res.render("organization", { title: "Organizations" });
+app.get('/organizations', (req, res) => {
+    res.sendFile(path.join(__dirname, 'src/views/organizations.html'));
 });
 
-app.get("/service-projects", (req, res) => {
-  res.render("service-projects", { title: "Service Projects" });
+app.get('/projects', (req, res) => {
+    res.sendFile(path.join(__dirname, 'src/views/projects.html'));
 });
 
-app.get("/categories", (req, res) => {
-  res.render("categories", { title: "Service Project Categories" });
-});
-
-// Start server
-app.listen(port, () => {
-  console.log(`Server running on http://localhost:${port}`);
-  
+app.listen(PORT, () => {
+  console.log(`Server is running at http://127.0.0.1:${PORT}`);
+  console.log(`Environment: ${NODE_ENV}`);
 });
