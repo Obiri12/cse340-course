@@ -45,28 +45,13 @@ app.get('/organizations', async (req, res) => {
 });
 
 app.get('/projects', async (req, res) => {
-  const title = 'Service Projects';
-  res.render('projects', { title });
-});
-
-app.get('/projects', async (req, res) => {
-  const title = 'Service Projects';
-
-  try {
     const projects = await getAllProjects();
 
-    // Verify the query works
-    console.log(projects);
-
-    res.render('projects', {
-      title,
-      projects
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).send('Unable to retrieve service projects.');
-  }
+  const title = 'Service Projects';
+  res.render('projects', { title, projects });
 });
+
+
 
 app.listen(PORT, async() => {
   try{
