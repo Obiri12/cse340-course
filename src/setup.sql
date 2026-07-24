@@ -1,27 +1,22 @@
 -- Organization Table 
-CREATE TABLE organization (
-    organization_id SERIAL PRIMARY KEY,
-    name VARCHAR(150) NOT NULL,
-    description TEXT NOT NULL,
-    contact_email VARCHAR(255) NOT NULL,
-    logo_filename VARCHAR(255) NOT NULL
-);
-
--- Insert sample data: Organizations
-INSERT INTO organization (name, description, contact_email, logo_filename)
-VALUES
-('BrightFuture Builders', 'A nonprofit focused on improving community infrastructure through sustainable construction projects.', 'info@brightfuturebuilders.org', 'brightfuture-logo.png'),
-('GreenHarvest Growers', 'An urban farming collective promoting food sustainability and education in local neighborhoods.', 'contact@greenharvest.org', 'greenharvest-logo.png'),
-('UnityServe Volunteers', 'A volunteer coordination group supporting local charities and service initiatives.', 'hello@unityserve.org', 'unityserve-logo.png');
+SELECT * FROM organization
 
 CREATE TABLE service_project (
-  project_id SERIAL PRIMARY KEY,
-  organization_id INT NOT NULL REFERENCES organization(organization_id),
-  title VARCHAR(255) NOT NULL,
-  description TEXT NOT NULL,
-  location VARCHAR(255) NOT NULL,
-  date DATE NOT NULL
+    project_id SERIAL PRIMARY KEY,
+    organization_id INT NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    description TEXT NOT NULL,
+    location VARCHAR(255) NOT NULL,
+    date DATE NOT NULL,
+
+    CONSTRAINT fk_service_project_organization
+        FOREIGN KEY (organization_id)
+        REFERENCES organization(organization_id)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
 );
+
+
 
 SELECT * FROM service_project; 
 
@@ -58,9 +53,21 @@ SELECT * FROM category;
 CREATE TABLE project_category (
     project_id INT NOT NULL,
     category_id INT NOT NULL,
-    PRIMARY KEY (project_id, category_id),
-    FOREIGN KEY (project_id) REFERENCES service_project(project_id) ON DELETE CASCADE,
-    FOREIGN KEY (category_id) REFERENCES category(category_id) ON DELETE CASCADE
+
+    CONSTRAINT pk_project_category
+        PRIMARY KEY (project_id, category_id),
+
+    CONSTRAINT fk_project_category_project
+        FOREIGN KEY (project_id)
+        REFERENCES service_project(project_id)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+
+    CONSTRAINT fk_project_category_category
+        FOREIGN KEY (category_id)
+        REFERENCES category(category_id)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
 );
 
 SELECT * FROM project_category; 
@@ -75,3 +82,4 @@ INSERT INTO project_category (project_id, category_id) VALUES
 (2, 2), -- Project 2 → Educational
 (3, 3), -- Project 3 → Community Service
 (4, 4); -- Project 4 → Health and Wellness
+
